@@ -1,0 +1,34 @@
+name: "Test: Latest checkov-action with multi framework and checks"
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+# Using latest checkov-action@master (unpatched, v3.2.519)
+# Testing multiple frameworks and multiple checks
+
+jobs:
+  checkov-multi-framework-checks:
+    runs-on: ubuntu-latest
+    name: "Multi framework + multi checks (latest)"
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Checkov with multiple frameworks and checks
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: "terraform secrets"
+          skip_check: "CKV_AWS_20,CKV_AWS_57"
+          output_format: cli
+          soft_fail: false
+          skip_download: true
+          log_level: DEBUG
