@@ -6,15 +6,24 @@
   --color-mono-card-hover: #1a2234;
   --color-mono-border: #1f2937;
 
-  /* Monopoly property colors */
-  --color-prop-brown: #8B4513;
-  --color-prop-light-blue: #87CEEB;
-  --color-prop-pink: #FF69B4;
-  --color-prop-orange: #FF8C00;
-  --color-prop-red: #FF0000;
-  --color-prop-yellow: #FFD700;
-  --color-prop-green: #00A86B;
-  --color-prop-dark-blue: #0000CD;
+  /* Classic Monopoly board palette */
+  --color-board-felt: #c7e4c7;
+  --color-board-cell: #fefcf3;
+  --color-board-ink: #1a1a1a;
+  --color-board-line: #1a1a1a;
+  --color-monopoly-red: #e8262e;
+  --color-chance-orange: #f29e2f;
+  --color-chest-blue: #5fb8e6;
+
+  /* Monopoly property colors — classic hues */
+  --color-prop-brown: #955436;
+  --color-prop-light-blue: #aae0f2;
+  --color-prop-pink: #d93a96;
+  --color-prop-orange: #f7941d;
+  --color-prop-red: #ed1b24;
+  --color-prop-yellow: #fef200;
+  --color-prop-green: #1fb25a;
+  --color-prop-dark-blue: #0072bb;
 
   /* Player colors */
   --color-player-red: #ef4444;
