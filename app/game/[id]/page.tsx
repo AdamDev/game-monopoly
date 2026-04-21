@@ -215,20 +215,18 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         myPlayerId={playerId}
       />
 
-      {/* Board + center content */}
+      {/* Board */}
       <GameBoard
         properties={game.properties}
         players={game.players}
         currentPlayerIndex={game.currentPlayerIndex}
         myPlayerId={playerId}
-      >
-        <div className="flex flex-col items-center justify-center gap-3 w-full h-full">
-          <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-            מונופול
-          </h2>
+      />
 
+      {/* Action strip — dice + controls below the board */}
+      <div className="w-full max-w-[min(90vh,90vw)] mx-auto">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl bg-mono-card border border-mono-border p-3">
           <DiceRoll dice={dice} rolling={rolling} />
-
           <ActionPanel
             game={game}
             myPlayerId={playerId}
@@ -238,10 +236,18 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
             onEndTurn={handleEndTurn}
             rolling={rolling}
           />
-
-          <GameLog entries={logEntries} />
         </div>
-      </GameBoard>
+
+        {/* Log in a collapsible footer */}
+        <details className="mt-2 rounded-xl bg-mono-card/60 border border-mono-border/60 text-xs">
+          <summary className="cursor-pointer select-none px-3 py-2 text-zinc-300 font-medium">
+            יומן המשחק
+          </summary>
+          <div className="px-2 pb-2">
+            <GameLog entries={logEntries} />
+          </div>
+        </details>
+      </div>
     </div>
   )
 }

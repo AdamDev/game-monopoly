@@ -9,7 +9,6 @@ interface GameBoardProps {
   players: GamePlayer[]
   currentPlayerIndex: number
   myPlayerId: string
-  children?: React.ReactNode
 }
 
 function getSpaceCell(position: number): { col: number; row: number } {
@@ -36,7 +35,6 @@ export default function GameBoard({
   players,
   currentPlayerIndex,
   myPlayerId,
-  children,
 }: GameBoardProps) {
   const currentPlayer = players[currentPlayerIndex]
 
@@ -138,12 +136,6 @@ export default function GameBoard({
               </div>
             </div>
 
-            {/* Action panel slot — above the banner */}
-            <div className="relative z-10 w-full h-full flex items-center justify-center px-4">
-              <div className="bg-[var(--color-board-cell)]/95 backdrop-blur-sm border-2 border-black/70 rounded-lg px-3 py-2 shadow-lg max-w-[65%]">
-                {children}
-              </div>
-            </div>
           </div>
 
           {/* Animated player tokens overlay */}

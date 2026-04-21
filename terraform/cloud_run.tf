@@ -6,9 +6,11 @@ resource "google_cloud_run_v2_service" "monopoly_app" {
     service_account = google_service_account.monopoly_app.email
 
     # Scale to zero when idle
+    # Single-instance Socket.IO: broadcast rooms only work within one instance
+    # (no Redis adapter configured). Keep max at 1 so all players hit the same pod.
     scaling {
       min_instance_count = 0
-      max_instance_count = 2
+      max_instance_count = 1
     }
 
     # WebSocket connections need longer timeout (1 hour)
@@ -19,7 +21,7 @@ resource "google_cloud_run_v2_service" "monopoly_app" {
 
     containers {
       # Updated by deploy.sh after each build
-      image = "docker.io/adamva/monopoly@sha256:ec54aabeb1650dc484278e232f9d50efe0a61a51314b6e406b95c84852b44af9"
+      image = "docker.io/adamva/monopoly@sha256:160225af661aed685b2b0e2e7e81b90fe3c4696f45ec6eab3d4514fd76b61fbb"
 
       ports {
         container_port = 3000
