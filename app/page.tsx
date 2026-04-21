@@ -56,12 +56,12 @@ export default function Home() {
       })
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Failed to create game')
+        throw new Error(data.error || 'יצירת המשחק נכשלה')
       }
       const game = await res.json()
       router.push(`/game/${game._id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create game')
+      setError(err instanceof Error ? err.message : 'יצירת המשחק נכשלה')
     } finally {
       setCreating(false)
     }
@@ -73,7 +73,7 @@ export default function Home() {
 
     const code = joinCode.trim().toUpperCase()
     if (code.length !== 6) {
-      setError('Enter a 6-character game code')
+      setError('הזינו קוד משחק בן 6 תווים')
       return
     }
 
@@ -91,12 +91,12 @@ export default function Home() {
       })
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Failed to join game')
+        throw new Error(data.error || 'ההצטרפות למשחק נכשלה')
       }
       const game = await res.json()
       router.push(`/game/${game._id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to join game')
+      setError(err instanceof Error ? err.message : 'ההצטרפות למשחק נכשלה')
     } finally {
       setJoining(false)
     }
@@ -111,13 +111,13 @@ export default function Home() {
         <div className="text-center">
           <h1 className="text-5xl font-extrabold tracking-tight">
             <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-              Monopoly
+              מונופול
             </span>
           </h1>
-          <p className="mt-2 text-zinc-400">Play with friends online</p>
+          <p className="mt-2 text-zinc-400">שחקו עם חברים אונליין</p>
           {playerName && (
             <p className="mt-1 text-sm text-zinc-500">
-              Playing as{' '}
+              משחקים בשם{' '}
               <button
                 onClick={() => setShowNamePrompt(true)}
                 className="text-emerald-400 hover:underline"
@@ -130,25 +130,25 @@ export default function Home() {
 
         {/* Create Game */}
         <div className="rounded-2xl bg-mono-card border border-mono-border p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Create a Game</h2>
+          <h2 className="text-lg font-semibold text-white mb-4">פתיחת משחק חדש</h2>
           <button
             onClick={() => handleCreate()}
             disabled={creating}
             className="w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white transition-colors hover:bg-emerald-500 disabled:opacity-50"
           >
-            {creating ? 'Creating...' : 'New Game'}
+            {creating ? 'יוצר...' : 'משחק חדש'}
           </button>
         </div>
 
         {/* Join Game */}
         <div className="rounded-2xl bg-mono-card border border-mono-border p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Join a Game</h2>
-          <div className="flex gap-3">
+          <h2 className="text-lg font-semibold text-white mb-4">הצטרפות למשחק</h2>
+          <div className="flex gap-3" dir="ltr">
             <input
               type="text"
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-              placeholder="Enter code..."
+              placeholder="הזינו קוד..."
               maxLength={6}
               className="flex-1 rounded-xl bg-mono-bg border border-mono-border px-4 py-3 text-white uppercase tracking-widest text-center placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
@@ -157,7 +157,7 @@ export default function Home() {
               disabled={joining || joinCode.trim().length !== 6}
               className="rounded-xl bg-teal-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-teal-500 disabled:opacity-50"
             >
-              {joining ? '...' : 'Join'}
+              {joining ? '...' : 'הצטרף'}
             </button>
           </div>
         </div>

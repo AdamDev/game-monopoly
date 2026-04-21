@@ -28,7 +28,7 @@ export default function ActionPanel({
   if (!isMyTurn) {
     return (
       <div className="text-center text-zinc-400 text-sm">
-        Waiting for <span className="text-white font-medium">{currentPlayer?.name}</span> to play...
+        ממתינים ש-<span className="text-white font-medium">{currentPlayer?.name}</span> ישחק...
       </div>
     )
   }
@@ -51,7 +51,7 @@ export default function ActionPanel({
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <p className="text-sm text-emerald-400 font-medium">Your turn!</p>
+      <p className="text-sm text-emerald-400 font-medium">התור שלך!</p>
 
       {game.turnPhase === 'roll' && (
         <button
@@ -59,14 +59,14 @@ export default function ActionPanel({
           disabled={rolling}
           className="rounded-xl bg-emerald-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-emerald-500 disabled:opacity-50"
         >
-          {rolling ? 'Rolling...' : currentPlayer.isInJail ? 'Roll for Doubles' : 'Roll Dice'}
+          {rolling ? 'מטיל...' : currentPlayer.isInJail ? 'הטל לכפולות' : 'הטל קוביות'}
         </button>
       )}
 
       {game.turnPhase === 'action' && isUnownedProperty && (
         <div className="flex flex-col items-center gap-2">
           <p className="text-sm text-zinc-300">
-            <span className="font-medium text-white">{space?.name}</span> — ${space?.price}
+            <span className="font-medium text-white">{space?.name}</span> — <span dir="ltr">${space?.price}</span>
           </p>
           <div className="flex gap-2">
             <button
@@ -74,13 +74,13 @@ export default function ActionPanel({
               disabled={!canBuy}
               className="rounded-xl bg-emerald-600 px-6 py-2.5 font-semibold text-white transition-colors hover:bg-emerald-500 disabled:opacity-50"
             >
-              Buy ${space?.price}
+              קנה ב-<span dir="ltr">${space?.price}</span>
             </button>
             <button
               onClick={onDeclineProperty}
               className="rounded-xl bg-zinc-700 px-6 py-2.5 font-semibold text-white transition-colors hover:bg-zinc-600"
             >
-              Pass
+              דלג
             </button>
           </div>
         </div>
@@ -91,7 +91,7 @@ export default function ActionPanel({
           onClick={onEndTurn}
           className="rounded-xl bg-zinc-700 px-8 py-3 font-semibold text-white transition-colors hover:bg-zinc-600"
         >
-          End Turn
+          סיים תור
         </button>
       )}
     </div>

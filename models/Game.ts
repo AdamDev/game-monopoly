@@ -11,6 +11,7 @@ const gamePlayerSchema = new Schema({
   getOutOfJailCards: { type: Number, default: 0 },
   isBankrupt: { type: Boolean, default: false },
   connected: { type: Boolean, default: true },
+  avatarUrl: { type: String, default: null },
 }, { _id: false })
 
 const gamePropertySchema = new Schema({

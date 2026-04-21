@@ -10,8 +10,8 @@ interface NamePromptProps {
 
 export default function NamePrompt({
   onSubmit,
-  title = 'Enter Your Name',
-  subtitle = 'Choose a display name for the game',
+  title = 'הזינו את שמכם',
+  subtitle = 'בחרו שם תצוגה למשחק',
 }: NamePromptProps) {
   const [name, setName] = useState('')
 
@@ -33,7 +33,7 @@ export default function NamePrompt({
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Your name..."
+            placeholder="השם שלכם..."
             maxLength={20}
             autoFocus
             className="w-full rounded-xl bg-mono-bg border border-mono-border px-4 py-3 text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -43,7 +43,7 @@ export default function NamePrompt({
             disabled={name.trim().length < 2}
             className="w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white transition-colors hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Continue
+            המשך
           </button>
         </form>
       </div>

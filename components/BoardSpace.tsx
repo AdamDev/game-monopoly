@@ -23,6 +23,49 @@ const PLAYER_DOT_COLORS: Record<string, string> = {
   orange: 'bg-player-orange',
 }
 
+const HEBREW_NAMES: Record<number, string> = {
+  0: 'התחלה',
+  1: 'שד׳ ים תיכון',
+  2: 'קופת קהילה',
+  3: 'שד׳ הבלטי',
+  4: 'מס הכנסה',
+  5: 'רכבת רידינג',
+  6: 'שד׳ המזרח',
+  7: 'הזדמנות',
+  8: 'שד׳ ורמונט',
+  9: 'שד׳ קונטיקט',
+  10: 'כלא / ביקור',
+  11: 'כיכר סנט צ׳רלס',
+  12: 'חברת חשמל',
+  13: 'שד׳ סטייטס',
+  14: 'שד׳ וירג׳יניה',
+  15: 'רכבת פנסילבניה',
+  16: 'כיכר סנט ג׳יימס',
+  17: 'קופת קהילה',
+  18: 'שד׳ טנסי',
+  19: 'שד׳ ניו יורק',
+  20: 'חניה חופשית',
+  21: 'שד׳ קנטאקי',
+  22: 'הזדמנות',
+  23: 'שד׳ אינדיאנה',
+  24: 'שד׳ אילינוי',
+  25: 'רכבת B&O',
+  26: 'שד׳ אטלנטיק',
+  27: 'שד׳ ונטנור',
+  28: 'מפעל המים',
+  29: 'גני מרווין',
+  30: 'לכלא!',
+  31: 'שד׳ הפסיפיק',
+  32: 'שד׳ צפון קרוליינה',
+  33: 'קופת קהילה',
+  34: 'שד׳ פנסילבניה',
+  35: 'הקו הקצר',
+  36: 'הזדמנות',
+  37: 'פארק פלייס',
+  38: 'מס מותרות',
+  39: 'בורדווק',
+}
+
 interface BoardSpaceProps {
   index: number
   properties: GameProperty[]
@@ -33,22 +76,20 @@ interface BoardSpaceProps {
 export default function BoardSpace({ index, properties, players, side }: BoardSpaceProps) {
   const space = BOARD[index]
   const prop = properties.find(p => p.boardPosition === index)
-  const playersHere = players.filter(p => p.position === index && !p.isBankrupt)
 
   const owner = prop?.ownerPlayerId
     ? players.find(p => p.playerId === prop.ownerPlayerId)
     : null
 
   const isCorner = side === 'corner'
-
-  // Short display name
-  const shortName = getShortName(space.name, space.type)
+  const displayName = HEBREW_NAMES[index] || space.name
 
   return (
     <div
       className={`
         relative flex flex-col items-center justify-center
-        border border-mono-border/50 bg-mono-card text-[8px] sm:text-[9px] leading-tight
+        border border-mono-border/60 bg-gradient-to-br from-mono-card to-mono-card/70
+        text-[8px] sm:text-[9px] leading-tight
         overflow-hidden select-none
         ${isCorner ? 'p-1' : 'p-0.5'}
       `}
@@ -57,23 +98,23 @@ export default function BoardSpace({ index, properties, players, side }: BoardSp
       {space.color && (
         <div
           className={`absolute ${
-            side === 'bottom' ? 'top-0 left-0 right-0 h-2' :
-            side === 'top' ? 'bottom-0 left-0 right-0 h-2' :
-            side === 'left' ? 'right-0 top-0 bottom-0 w-2' :
-            side === 'right' ? 'left-0 top-0 bottom-0 w-2' :
-            'top-0 left-0 right-0 h-2'
-          } ${COLOR_MAP[space.color] || ''}`}
+            side === 'bottom' ? 'top-0 left-0 right-0 h-2.5' :
+            side === 'top' ? 'bottom-0 left-0 right-0 h-2.5' :
+            side === 'left' ? 'right-0 top-0 bottom-0 w-2.5' :
+            side === 'right' ? 'left-0 top-0 bottom-0 w-2.5' :
+            'top-0 left-0 right-0 h-2.5'
+          } ${COLOR_MAP[space.color] || ''} shadow-[0_0_8px_rgba(255,255,255,0.15)_inset]`}
         />
       )}
 
       {/* Space name */}
-      <span className="text-zinc-300 text-center font-medium z-10 px-0.5 leading-[1.1]">
-        {shortName}
+      <span className="text-zinc-200 text-center font-semibold z-10 px-0.5 leading-[1.15]">
+        {displayName}
       </span>
 
       {/* Price */}
       {space.price && !prop?.ownerPlayerId && (
-        <span className="text-zinc-500 text-[7px]">${space.price}</span>
+        <span className="text-zinc-500 text-[7px] mt-0.5" dir="ltr">${space.price}</span>
       )}
 
       {/* Houses */}
@@ -92,39 +133,6 @@ export default function BoardSpace({ index, properties, players, side }: BoardSp
       {owner && (
         <div className={`w-2 h-2 rounded-full mt-0.5 ${PLAYER_DOT_COLORS[owner.color] || 'bg-zinc-500'} ring-1 ring-white/20`} />
       )}
-
-      {/* Player tokens */}
-      {playersHere.length > 0 && (
-        <div className="flex flex-wrap gap-px mt-0.5 justify-center z-10">
-          {playersHere.map(p => (
-            <div
-              key={p.playerId}
-              className={`w-3 h-3 rounded-full ${PLAYER_DOT_COLORS[p.color] || 'bg-zinc-500'} ring-1 ring-white/30 shadow-sm`}
-              title={p.name}
-            />
-          ))}
-        </div>
-      )}
     </div>
   )
-}
-
-function getShortName(name: string, type: string): string {
-  if (type === 'go') return 'GO'
-  if (type === 'jail') return 'JAIL'
-  if (type === 'free-parking') return 'FREE'
-  if (type === 'go-to-jail') return 'GO TO JAIL'
-  if (type === 'chance') return '?'
-  if (type === 'community-chest') return 'CC'
-  if (type === 'tax') return name.includes('Income') ? 'TAX $200' : 'TAX $100'
-  // Shorten property names
-  return name
-    .replace(' Avenue', ' Ave')
-    .replace(' Place', ' Pl')
-    .replace(' Gardens', ' Gdns')
-    .replace(' Railroad', ' RR')
-    .replace('Pennsylvania', 'Penn.')
-    .replace('Connecticut', 'Conn.')
-    .replace('Mediterranean', 'Medit.')
-    .replace('North Carolina', 'N.C.')
 }

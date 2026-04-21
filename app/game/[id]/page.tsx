@@ -83,7 +83,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         const data = await res.json()
         setGame(data)
       } catch {
-        setError('Failed to load game')
+        setError('טעינת המשחק נכשלה')
       }
     }
     load()
@@ -130,7 +130,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
       <div className="flex flex-1 flex-col items-center justify-center gap-4">
         <p className="text-red-400">{error}</p>
         <button onClick={() => router.push('/')} className="rounded-xl bg-mono-card border border-mono-border px-6 py-3 text-white hover:bg-mono-card-hover">
-          Back to Home
+          חזרה לדף הבית
         </button>
       </div>
     )
@@ -139,7 +139,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
   if (!game) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-zinc-400">Loading...</p>
+        <p className="text-zinc-400">טוען...</p>
       </div>
     )
   }
@@ -150,35 +150,35 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
       <div className="flex flex-1 flex-col items-center justify-center px-4">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-white">Waiting Room</h1>
-            <p className="mt-1 text-zinc-400">{game.players.length}/{game.maxPlayers} players</p>
-            {!connected && <p className="text-xs text-yellow-400 mt-1">Connecting...</p>}
+            <h1 className="text-3xl font-bold text-white">חדר המתנה</h1>
+            <p className="mt-1 text-zinc-400">{game.players.length}/{game.maxPlayers} שחקנים</p>
+            {!connected && <p className="text-xs text-yellow-400 mt-1">מתחבר...</p>}
           </div>
 
           {/* Invite link */}
           <div className="rounded-2xl bg-mono-card border border-mono-border p-5">
-            <p className="text-sm text-zinc-400 mb-2">Share this link:</p>
-            <div className="flex gap-2">
+            <p className="text-sm text-zinc-400 mb-2">שתפו את הקישור:</p>
+            <div className="flex gap-2" dir="ltr">
               <div className="flex-1 rounded-xl bg-mono-bg border border-mono-border px-4 py-2.5 text-emerald-400 font-mono text-sm truncate">
                 {typeof window !== 'undefined' ? `${window.location.origin}/join/${game.code}` : `/join/${game.code}`}
               </div>
               <button onClick={copyInviteLink} className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 shrink-0">
-                {copied ? 'Copied!' : 'Copy'}
+                {copied ? 'הועתק!' : 'העתק'}
               </button>
             </div>
-            <p className="mt-2 text-xs text-zinc-500">Code: <span className="font-mono text-zinc-400">{game.code}</span></p>
+            <p className="mt-2 text-xs text-zinc-500">קוד: <span className="font-mono text-zinc-400">{game.code}</span></p>
           </div>
 
           {/* Players */}
           <div className="rounded-2xl bg-mono-card border border-mono-border p-5">
-            <h2 className="text-lg font-semibold text-white mb-3">Players</h2>
+            <h2 className="text-lg font-semibold text-white mb-3">שחקנים</h2>
             <div className="space-y-2">
               {game.players.map(player => (
                 <div key={player.playerId} className="flex items-center gap-3 rounded-xl bg-mono-bg px-4 py-3">
                   <div className={`h-4 w-4 rounded-full ${PLAYER_COLOR_MAP[player.color] || 'bg-zinc-500'}`} />
                   <span className="text-white font-medium">{player.name}</span>
-                  {player.playerId === game.hostPlayerId && <span className="ml-auto text-xs text-emerald-400 font-medium">HOST</span>}
-                  {player.playerId === playerId && player.playerId !== game.hostPlayerId && <span className="ml-auto text-xs text-zinc-500">You</span>}
+                  {player.playerId === game.hostPlayerId && <span className="mr-auto text-xs text-emerald-400 font-medium">מארח</span>}
+                  {player.playerId === playerId && player.playerId !== game.hostPlayerId && <span className="mr-auto text-xs text-zinc-500">אתה</span>}
                 </div>
               ))}
             </div>
@@ -186,14 +186,14 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
 
           {isHost && game.players.length >= 2 && (
             <button onClick={handleStartGame} className="w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white transition-colors hover:bg-emerald-500">
-              Start Game
+              התחל משחק
             </button>
           )}
           {isHost && game.players.length < 2 && (
-            <p className="text-center text-sm text-zinc-500">Need at least 2 players to start</p>
+            <p className="text-center text-sm text-zinc-500">צריך לפחות 2 שחקנים כדי להתחיל</p>
           )}
           {!isPlayer && (
-            <p className="text-center text-sm text-red-400">You are not in this game</p>
+            <p className="text-center text-sm text-red-400">אתה לא משתתף במשחק זה</p>
           )}
         </div>
       </div>
@@ -205,7 +205,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
     <div className="flex flex-1 flex-col gap-3 p-2 sm:p-4 max-w-5xl mx-auto w-full">
       {/* Connection status */}
       {!connected && (
-        <p className="text-center text-xs text-yellow-400">Reconnecting...</p>
+        <p className="text-center text-xs text-yellow-400">מתחבר מחדש...</p>
       )}
 
       {/* Players bar */}
@@ -216,10 +216,15 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
       />
 
       {/* Board + center content */}
-      <GameBoard properties={game.properties} players={game.players}>
+      <GameBoard
+        properties={game.properties}
+        players={game.players}
+        currentPlayerIndex={game.currentPlayerIndex}
+        myPlayerId={playerId}
+      >
         <div className="flex flex-col items-center justify-center gap-3 w-full h-full">
           <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-            MONOPOLY
+            מונופול
           </h2>
 
           <DiceRoll dice={dice} rolling={rolling} />

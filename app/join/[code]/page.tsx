@@ -37,12 +37,12 @@ export default function JoinByLink({ params }: { params: Promise<{ code: string 
       })
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Failed to join game')
+        throw new Error(data.error || 'ההצטרפות למשחק נכשלה')
       }
       const game = await res.json()
       router.push(`/game/${game._id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to join game')
+      setError(err instanceof Error ? err.message : 'ההצטרפות למשחק נכשלה')
       setJoining(false)
     }
   }
@@ -58,8 +58,8 @@ export default function JoinByLink({ params }: { params: Promise<{ code: string 
       <div className="flex flex-1 items-center justify-center">
         <NamePrompt
           onSubmit={handleNameSubmit}
-          title="Join Game"
-          subtitle={`Enter your name to join game ${code.toUpperCase()}`}
+          title="הצטרפות למשחק"
+          subtitle={`הזינו את שמכם כדי להצטרף למשחק ${code.toUpperCase()}`}
         />
       </div>
     )
@@ -67,7 +67,7 @@ export default function JoinByLink({ params }: { params: Promise<{ code: string 
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      {joining && <p className="text-zinc-400">Joining game...</p>}
+      {joining && <p className="text-zinc-400">מצטרף למשחק...</p>}
       {error && (
         <div className="text-center">
           <p className="text-red-400 mb-4">{error}</p>
@@ -75,7 +75,7 @@ export default function JoinByLink({ params }: { params: Promise<{ code: string 
             onClick={() => router.push('/')}
             className="rounded-xl bg-mono-card border border-mono-border px-6 py-3 text-white hover:bg-mono-card-hover"
           >
-            Back to Home
+            חזרה לדף הבית
           </button>
         </div>
       )}

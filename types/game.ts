@@ -50,6 +50,7 @@ export interface GamePlayer {
   getOutOfJailCards: number
   isBankrupt: boolean
   connected: boolean
+  avatarUrl?: string
 }
 
 export interface GameProperty {

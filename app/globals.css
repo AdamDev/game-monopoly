@@ -29,11 +29,17 @@
 
   --animate-dice-roll: dice-roll 0.5s ease-out;
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-bounce-soft: bounce-soft 1.4s ease-in-out infinite;
 
   @keyframes dice-roll {
     0% { transform: rotate(0deg) scale(1); }
     50% { transform: rotate(180deg) scale(1.2); }
     100% { transform: rotate(360deg) scale(1); }
+  }
+
+  @keyframes bounce-soft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
   }
 }
 

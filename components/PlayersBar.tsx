@@ -37,12 +37,12 @@ export default function PlayersBar({ players, currentPlayerIndex, myPlayerId }: 
             <div className={`w-3 h-3 rounded-full ${PLAYER_DOT_COLORS[player.color] || 'bg-zinc-500'}`} />
             <span className={`font-medium ${isCurrentTurn ? 'text-emerald-400' : 'text-white'}`}>
               {player.name}
-              {isMe && ' (you)'}
+              {isMe && ' (אני)'}
             </span>
-            <span className="text-zinc-400 font-mono text-xs">${player.money}</span>
+            <span className="text-zinc-400 font-mono text-xs" dir="ltr">${player.money}</span>
             {player.isInJail && <span className="text-xs">🔒</span>}
-            {!player.connected && <span className="text-xs text-zinc-500">offline</span>}
-            {player.isBankrupt && <span className="text-xs text-red-400">bankrupt</span>}
+            {!player.connected && <span className="text-xs text-zinc-500">לא מחובר</span>}
+            {player.isBankrupt && <span className="text-xs text-red-400">פשט רגל</span>}
           </div>
         )
       })}
