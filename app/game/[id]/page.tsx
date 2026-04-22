@@ -387,7 +387,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
   const round = Math.floor((game.players.reduce((acc, p) => acc + (p.position || 0), 0) / 40) / Math.max(1, game.players.length)) + 1
 
   return (
-    <div className="relative flex flex-1 flex-col h-screen overflow-hidden">
+    <div className="relative flex flex-1 flex-col min-h-[100dvh] lg:h-screen lg:overflow-hidden">
       <div className="bg-grid-overlay" />
 
       {/* Top bar */}
@@ -485,7 +485,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
 
       {/* Layout */}
       <div
-        className="relative z-10 flex-1 flex flex-col lg:flex-row items-stretch lg:items-center justify-center gap-3 p-3 overflow-hidden"
+        className="relative z-10 flex-1 flex flex-col lg:flex-row items-stretch lg:items-center justify-center gap-3 p-3 lg:overflow-hidden"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
 
