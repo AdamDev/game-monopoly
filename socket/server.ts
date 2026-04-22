@@ -48,8 +48,9 @@ export function setupSocketHandlers(io: SocketIOServer<ClientToServerEvents, Ser
       game.players[playerIdx].connected = true
       await game.save()
 
-      // Send full state to the connecting player
-      socket.emit('game:state', game.toJSON())
+      // Broadcast fresh state to everyone in the room so existing players
+      // see newly-joined members without needing to refresh.
+      io.to(gameId).emit('game:state', game.toJSON())
 
       // Notify others
       socket.to(gameId).emit('player:connected', { playerId })

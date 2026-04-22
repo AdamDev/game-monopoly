@@ -11,16 +11,18 @@ interface GameBoardProps {
   myPlayerId: string
 }
 
+// GO at top-right (col:11, row:1). Then top row right→left, left col top→bottom,
+// bottom row left→right, right col bottom→top.
 function getSpaceCell(position: number): { col: number; row: number } {
-  if (position === 0) return { col: 11, row: 11 }
-  if (position >= 1 && position <= 9) return { col: 11 - position, row: 11 }
-  if (position === 10) return { col: 1, row: 11 }
-  if (position >= 11 && position <= 19) return { col: 1, row: 21 - position }
-  if (position === 20) return { col: 1, row: 1 }
-  if (position >= 21 && position <= 29) return { col: position - 19, row: 1 }
-  if (position === 30) return { col: 11, row: 1 }
-  if (position >= 31 && position <= 39) return { col: 11, row: position - 29 }
-  return { col: 11, row: 11 }
+  if (position === 0) return { col: 11, row: 1 }
+  if (position >= 1 && position <= 9) return { col: 11 - position, row: 1 }
+  if (position === 10) return { col: 1, row: 1 }
+  if (position >= 11 && position <= 19) return { col: 1, row: position - 9 }
+  if (position === 20) return { col: 1, row: 11 }
+  if (position >= 21 && position <= 29) return { col: position - 19, row: 11 }
+  if (position === 30) return { col: 11, row: 11 }
+  if (position >= 31 && position <= 39) return { col: 11, row: 41 - position }
+  return { col: 11, row: 1 }
 }
 
 function cellToPercent(cell: { col: number; row: number }): { x: number; y: number } {
@@ -46,118 +48,114 @@ export default function GameBoard({
   })
 
   return (
-    <div className="aspect-square w-full max-w-[min(90vh,90vw)] mx-auto" dir="ltr">
-      <div className="relative w-full h-full rounded-lg p-2 bg-[var(--color-board-felt)] shadow-[0_20px_50px_rgba(0,0,0,0.45)] ring-2 ring-black/80">
-        <div className="relative grid grid-cols-11 grid-rows-11 w-full h-full gap-0 border-2 border-black rounded-sm overflow-hidden bg-[var(--color-board-felt)]">
-          {/* Corners */}
-          <div style={{ gridColumn: 1, gridRow: 1 }}>
-            <BoardSpace index={20} properties={properties} players={players} side="corner" />
-          </div>
-          <div style={{ gridColumn: 11, gridRow: 1 }}>
-            <BoardSpace index={30} properties={properties} players={players} side="corner" />
-          </div>
-          <div style={{ gridColumn: 1, gridRow: 11 }}>
-            <BoardSpace index={10} properties={properties} players={players} side="corner" />
-          </div>
-          <div style={{ gridColumn: 11, gridRow: 11 }}>
-            <BoardSpace index={0} properties={properties} players={players} side="corner" />
-          </div>
-
-          {/* Top row: 21-29 */}
-          {[21, 22, 23, 24, 25, 26, 27, 28, 29].map((idx, i) => (
-            <div key={idx} style={{ gridColumn: i + 2, gridRow: 1 }}>
-              <BoardSpace index={idx} properties={properties} players={players} side="top" />
-            </div>
-          ))}
-
-          {/* Left column: 19-11 */}
-          {[19, 18, 17, 16, 15, 14, 13, 12, 11].map((idx, i) => (
-            <div key={idx} style={{ gridColumn: 1, gridRow: i + 2 }}>
-              <BoardSpace index={idx} properties={properties} players={players} side="left" />
-            </div>
-          ))}
-
-          {/* Right column: 31-39 */}
-          {[31, 32, 33, 34, 35, 36, 37, 38, 39].map((idx, i) => (
-            <div key={idx} style={{ gridColumn: 11, gridRow: i + 2 }}>
-              <BoardSpace index={idx} properties={properties} players={players} side="right" />
-            </div>
-          ))}
-
-          {/* Bottom row: 9-1 */}
-          {[9, 8, 7, 6, 5, 4, 3, 2, 1].map((idx, i) => (
-            <div key={idx} style={{ gridColumn: i + 2, gridRow: 11 }}>
-              <BoardSpace index={idx} properties={properties} players={players} side="bottom" />
-            </div>
-          ))}
-
-          {/* Center area */}
+    <div
+      className="relative aspect-square"
+      style={{ width: 'min(78vh, 78vw, 720px)' }}
+      dir="ltr"
+    >
+      <div
+        className="relative w-full h-full grid grid-cols-11 grid-rows-11 gap-0"
+        style={{
+          background: 'var(--color-board-cell)',
+          border: '2px solid var(--color-board-line)',
+          boxShadow: '0 0 0 5px rgba(201,168,76,0.3), 0 40px 120px rgba(0,0,0,0.8)',
+        }}
+      >
+        {/* Center logo */}
+        <div
+          className="flex flex-col items-center justify-center"
+          style={{
+            gridColumn: '2 / 11',
+            gridRow: '2 / 11',
+            background: 'var(--color-board-cell)',
+            border: '1px solid rgba(42,42,42,0.15)',
+          }}
+        >
+          <div className="text-[clamp(1.5rem,2.8vw,2.8rem)] mb-1.5">🎩</div>
           <div
-            className="relative flex flex-col items-center justify-center bg-[var(--color-board-felt)] overflow-hidden"
-            style={{ gridColumn: '2 / 11', gridRow: '2 / 11' }}
-            dir="rtl"
+            className="leading-none"
+            style={{
+              fontFamily: 'var(--font-bebas), sans-serif',
+              fontSize: 'clamp(2rem,4.5vw,4rem)',
+              letterSpacing: '0.08em',
+              color: 'var(--color-mono-red)',
+            }}
           >
-            {/* Community Chest diamond (top-left) */}
-            <div className="absolute top-[6%] left-[8%] w-[26%] aspect-square flex items-center justify-center transform rotate-45 bg-[var(--color-chest-blue)]/80 border-2 border-dashed border-white/60 rounded-md shadow">
-              <div className="-rotate-45 flex flex-col items-center gap-1 text-white">
-                <span className="text-2xl sm:text-3xl">💰</span>
-                <span className="text-[8px] sm:text-[10px] font-bold text-center leading-tight" style={{ fontFamily: 'var(--font-heebo)' }}>
-                  קופת<br />קהילה
-                </span>
-              </div>
-            </div>
-
-            {/* Chance diamond (bottom-right) */}
-            <div className="absolute bottom-[6%] right-[8%] w-[26%] aspect-square flex items-center justify-center transform rotate-45 bg-[var(--color-chance-orange)]/90 border-2 border-dashed border-white/60 rounded-md shadow">
-              <div className="-rotate-45 flex flex-col items-center gap-1 text-white">
-                <span className="text-3xl sm:text-4xl font-black leading-none">?</span>
-                <span className="text-[8px] sm:text-[10px] font-bold" style={{ fontFamily: 'var(--font-heebo)' }}>
-                  הזדמנות
-                </span>
-              </div>
-            </div>
-
-            {/* Diagonal MONOPOLY banner */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div
-                className="bg-[var(--color-monopoly-red)] px-6 sm:px-10 py-2 sm:py-3 shadow-[0_6px_20px_rgba(0,0,0,0.4)] border-2 border-white/30"
-                style={{
-                  transform: 'rotate(-45deg)',
-                  width: '78%',
-                  textAlign: 'center',
-                }}
-              >
-                <div className="text-white text-2xl sm:text-4xl md:text-5xl font-black tracking-[0.1em] leading-none" style={{ fontFamily: 'var(--font-bebas)' }}>
-                  MONOPOLY
-                </div>
-                <div className="text-white/90 text-[8px] sm:text-[10px] font-semibold mt-0.5">
-                  משחק הנדל״ן הקלאסי
-                </div>
-              </div>
-            </div>
-
+            MONOPOLY
           </div>
-
-          {/* Animated player tokens overlay */}
-          <div className="absolute inset-0 pointer-events-none">
-            {players.filter(p => !p.isBankrupt).map(player => {
-              const cell = getSpaceCell(player.position)
-              const { x, y } = cellToPercent(cell)
-              const stackArr = playersByPosition.get(player.position) || []
-              const stackIndex = stackArr.findIndex(p => p.playerId === player.playerId)
-              return (
-                <PlayerToken
-                  key={player.playerId}
-                  player={player}
-                  isCurrentTurn={currentPlayer?.playerId === player.playerId}
-                  isMe={player.playerId === myPlayerId}
-                  x={x}
-                  y={y}
-                  stackIndex={stackIndex}
-                />
-              )
-            })}
+          <div
+            className="font-bold uppercase mt-1"
+            style={{
+              fontSize: 'clamp(0.45rem,0.9vw,0.7rem)',
+              letterSpacing: '0.3em',
+              color: 'var(--color-board-line)',
+            }}
+          >
+            שחק · בנה · שלוט
           </div>
+        </div>
+
+        {/* Corners */}
+        <div style={{ gridColumn: 11, gridRow: 1 }}>
+          <BoardSpace index={0} properties={properties} players={players} side="corner" />
+        </div>
+        <div style={{ gridColumn: 1, gridRow: 1 }}>
+          <BoardSpace index={10} properties={properties} players={players} side="corner" />
+        </div>
+        <div style={{ gridColumn: 1, gridRow: 11 }}>
+          <BoardSpace index={20} properties={properties} players={players} side="corner" />
+        </div>
+        <div style={{ gridColumn: 11, gridRow: 11 }}>
+          <BoardSpace index={30} properties={properties} players={players} side="corner" />
+        </div>
+
+        {/* Top row (row:1): 1..9, going right→left in cols 10..2 */}
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => (
+          <div key={idx} style={{ gridColumn: 11 - idx, gridRow: 1 }}>
+            <BoardSpace index={idx} properties={properties} players={players} side="top" />
+          </div>
+        ))}
+
+        {/* Left col (col:1): 11..19, top→bottom in rows 2..10 */}
+        {[11, 12, 13, 14, 15, 16, 17, 18, 19].map((idx) => (
+          <div key={idx} style={{ gridColumn: 1, gridRow: idx - 9 }}>
+            <BoardSpace index={idx} properties={properties} players={players} side="left" />
+          </div>
+        ))}
+
+        {/* Bottom row (row:11): 21..29, left→right in cols 2..10 */}
+        {[21, 22, 23, 24, 25, 26, 27, 28, 29].map((idx) => (
+          <div key={idx} style={{ gridColumn: idx - 19, gridRow: 11 }}>
+            <BoardSpace index={idx} properties={properties} players={players} side="bottom" />
+          </div>
+        ))}
+
+        {/* Right col (col:11): 31..39, bottom→top in rows 10..2 */}
+        {[31, 32, 33, 34, 35, 36, 37, 38, 39].map((idx) => (
+          <div key={idx} style={{ gridColumn: 11, gridRow: 41 - idx }}>
+            <BoardSpace index={idx} properties={properties} players={players} side="right" />
+          </div>
+        ))}
+
+        {/* Animated player tokens overlay */}
+        <div className="absolute inset-0 pointer-events-none">
+          {players.filter(p => !p.isBankrupt).map(player => {
+            const cell = getSpaceCell(player.position)
+            const { x, y } = cellToPercent(cell)
+            const stackArr = playersByPosition.get(player.position) || []
+            const stackIndex = stackArr.findIndex(p => p.playerId === player.playerId)
+            return (
+              <PlayerToken
+                key={player.playerId}
+                player={player}
+                isCurrentTurn={currentPlayer?.playerId === player.playerId}
+                isMe={player.playerId === myPlayerId}
+                x={x}
+                y={y}
+                stackIndex={stackIndex}
+              />
+            )
+          })}
         </div>
       </div>
     </div>

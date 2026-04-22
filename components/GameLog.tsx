@@ -13,14 +13,26 @@ export default function GameLog({ entries }: GameLogProps) {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [entries.length])
 
+  // Reverse for newest-first feel like the design (entries added at top)
+  const reversed = [...entries].reverse()
+
   return (
-    <div className="w-full max-h-32 overflow-y-auto rounded-xl bg-mono-bg/50 border border-mono-border/30 p-2 text-xs">
+    <div className="h-full overflow-y-auto flex flex-col gap-1">
       {entries.length === 0 && (
-        <p className="text-zinc-500 text-center">המשחק מתחיל...</p>
+        <p className="text-center text-[0.7rem]" style={{ color: 'var(--color-muted)' }}>
+          המשחק מתחיל...
+        </p>
       )}
-      {entries.map((entry, i) => (
-        <p key={i} className="text-zinc-400 py-0.5 leading-snug">
-          {entry.message}
+      {reversed.map((entry, i) => (
+        <p
+          key={`${entry.timestamp}-${i}`}
+          className="text-[0.7rem] py-1 leading-snug"
+          style={{
+            color: 'var(--color-muted)',
+            borderBottom: '1px solid rgba(255,255,255,0.04)',
+          }}
+        >
+          <span style={{ color: 'var(--color-cream)', fontWeight: 600 }}>{entry.message}</span>
         </p>
       ))}
       <div ref={endRef} />

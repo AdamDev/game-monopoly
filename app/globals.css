@@ -1,54 +1,90 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-mono-bg: #0a0f1e;
-  --color-mono-card: #111827;
-  --color-mono-card-hover: #1a2234;
-  --color-mono-border: #1f2937;
+  /* New navy/gold palette */
+  --color-navy: #0b1622;
+  --color-navy2: #111f30;
+  --color-navy3: #17293d;
+  --color-gold: #c9a84c;
+  --color-gold-l: #e8c96e;
+  --color-gold-d: #7a6430;
+  --color-mono-red: #cc2936;
+  --color-mono-green: #2e8b57;
+  --color-cream: #f4efe4;
+  --color-muted: #7a90a8;
+
+  /* Backwards-compatible aliases (existing component classes) */
+  --color-mono-bg: #0b1622;
+  --color-mono-card: #111f30;
+  --color-mono-card-hover: #17293d;
+  --color-mono-border: #1f2e44;
 
   /* Classic Monopoly board palette */
-  --color-board-felt: #c7e4c7;
-  --color-board-cell: #fefcf3;
+  --color-board-felt: #0b1622;
+  --color-board-cell: #f5f0e2;
   --color-board-ink: #1a1a1a;
-  --color-board-line: #1a1a1a;
-  --color-monopoly-red: #e8262e;
+  --color-board-line: #2a2a2a;
+  --color-monopoly-red: #cc2936;
   --color-chance-orange: #f29e2f;
   --color-chest-blue: #5fb8e6;
 
   /* Monopoly property colors — classic hues */
-  --color-prop-brown: #955436;
-  --color-prop-light-blue: #aae0f2;
-  --color-prop-pink: #d93a96;
-  --color-prop-orange: #f7941d;
-  --color-prop-red: #ed1b24;
-  --color-prop-yellow: #fef200;
-  --color-prop-green: #1fb25a;
-  --color-prop-dark-blue: #0072bb;
+  --color-prop-brown: #8b1a1a;
+  --color-prop-light-blue: #4fc3f7;
+  --color-prop-pink: #f48fb1;
+  --color-prop-orange: #ff8c00;
+  --color-prop-red: #cc0000;
+  --color-prop-yellow: #ffd700;
+  --color-prop-green: #00aa00;
+  --color-prop-dark-blue: #1a2f8a;
 
   /* Player colors */
-  --color-player-red: #ef4444;
-  --color-player-blue: #3b82f6;
-  --color-player-green: #22c55e;
-  --color-player-yellow: #eab308;
-  --color-player-purple: #a855f7;
-  --color-player-orange: #f97316;
+  --color-player-red: #cc2936;
+  --color-player-blue: #1d6bbf;
+  --color-player-green: #2e8b57;
+  --color-player-yellow: #c9a84c;
+  --color-player-purple: #9b59b6;
+  --color-player-orange: #e67e22;
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-heebo);
+  --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-bebas);
 
   --animate-dice-roll: dice-roll 0.5s ease-out;
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-bounce-soft: bounce-soft 1.4s ease-in-out infinite;
+  --animate-spin-ring: spin-ring 8s linear infinite;
+  --animate-fade-up: fade-up 0.6s ease-out both;
+  --animate-float-up: float-up 22s linear infinite;
 
   @keyframes dice-roll {
     0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.2); }
-    100% { transform: rotate(360deg) scale(1); }
+    20% { transform: rotate(15deg) scale(0.9); }
+    40% { transform: rotate(-20deg) scale(1.1); }
+    60% { transform: rotate(10deg) scale(0.95); }
+    80% { transform: rotate(-5deg) scale(1.05); }
+    100% { transform: rotate(0deg) scale(1); }
   }
 
   @keyframes bounce-soft {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-4px); }
+  }
+
+  @keyframes spin-ring {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float-up {
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    8% { opacity: 0.08; }
+    92% { opacity: 0.08; }
+    100% { transform: translateY(-10vh) rotate(540deg); opacity: 0; }
   }
 }
 
@@ -57,19 +93,44 @@ html {
 }
 
 body {
-  background: var(--color-mono-bg);
-  color: #ededed;
-  font-family: var(--font-sans);
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(201,168,76,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 85% 85%, rgba(46,139,87,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 120% 120% at 50% 50%, #0b1622 0%, #060e17 100%);
+  background-attachment: fixed;
+  color: var(--color-cream);
+  font-family: var(--font-heebo), 'Heebo', sans-serif;
+}
+
+/* Background grid layer (shared across screens) */
+.bg-grid-overlay {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.035) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Gold-accented panel (used on lobby + side panels) */
+.gold-panel {
+  position: relative;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(201,168,76,0.14);
+}
+.gold-panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  opacity: 0.45;
+}
+
+/* Skewed gold "MONOPOLY" CTA / clip-path button */
+.btn-skew {
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #09090B;
-}
-::-webkit-scrollbar-thumb {
-  background: #27272A;
-  border-radius: 4px;
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.4); }

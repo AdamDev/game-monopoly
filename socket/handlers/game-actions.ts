@@ -132,8 +132,9 @@ export function handleGameActions(io: IO, socket: GameSocket) {
       await game.save()
       emitLandingEvents(io, gameId, game, landing)
 
-      // If no action needed, auto-advance to end-turn
-      if (landing.type === 'nothing' || landing.type === 'pay-rent' || landing.type === 'tax' || landing.type === 'go-to-jail') {
+      // If no buy decision is needed, auto-advance to end-turn.
+      // Only 'unowned-property' keeps phase='action' so the player can buy/decline.
+      if (landing.type !== 'unowned-property') {
         game.turnPhase = 'end-turn'
         await game.save()
       }

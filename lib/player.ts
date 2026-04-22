@@ -1,6 +1,8 @@
 const PLAYER_ID_KEY = 'monopoly_player_id'
 const PLAYER_NAME_KEY = 'monopoly_player_name'
 
+const nameListeners = new Set<() => void>()
+
 export function getPlayerId(): string {
   if (typeof window === 'undefined') return ''
   let id = localStorage.getItem(PLAYER_ID_KEY)
@@ -18,4 +20,12 @@ export function getPlayerName(): string | null {
 
 export function setPlayerName(name: string): void {
   localStorage.setItem(PLAYER_NAME_KEY, name)
+  nameListeners.forEach((fn) => fn())
+}
+
+export function subscribePlayerName(cb: () => void): () => void {
+  nameListeners.add(cb)
+  return () => {
+    nameListeners.delete(cb)
+  }
 }

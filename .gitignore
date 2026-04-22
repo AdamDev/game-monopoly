@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# design handoff bundle (not source)
+claude-design/
+
 # terraform
 terraform/*.tfvars
 terraform/.terraform/

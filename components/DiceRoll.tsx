@@ -5,29 +5,40 @@ interface DiceRollProps {
   rolling: boolean
 }
 
-const DOT_POSITIONS: Record<number, string[]> = {
-  1: ['top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'],
-  2: ['top-1 right-1', 'bottom-1 left-1'],
-  3: ['top-1 right-1', 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2', 'bottom-1 left-1'],
-  4: ['top-1 left-1', 'top-1 right-1', 'bottom-1 left-1', 'bottom-1 right-1'],
-  5: ['top-1 left-1', 'top-1 right-1', 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2', 'bottom-1 left-1', 'bottom-1 right-1'],
-  6: ['top-1 left-1', 'top-1 right-1', 'top-1/2 left-1 -translate-y-1/2', 'top-1/2 right-1 -translate-y-1/2', 'bottom-1 left-1', 'bottom-1 right-1'],
+// 3x3 grid pip indices
+const PIPS: Record<number, number[]> = {
+  1: [4],
+  2: [0, 8],
+  3: [0, 4, 8],
+  4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8],
+  6: [0, 2, 3, 5, 6, 8],
 }
 
 function Die({ value, rolling }: { value: number; rolling: boolean }) {
-  const dots = DOT_POSITIONS[value] || []
-
+  const pips = PIPS[value] || []
   return (
     <div
-      className={`
-        relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-white shadow-lg
-        ${rolling ? 'animate-dice-roll' : ''}
-      `}
+      className={`grid grid-cols-3 grid-rows-3 ${rolling ? 'animate-dice-roll' : ''}`}
+      style={{
+        width: '48px',
+        height: '48px',
+        background: '#fff',
+        borderRadius: '7px',
+        boxShadow: '3px 3px 0 rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.2)',
+        padding: '6px',
+        gap: '3px',
+      }}
     >
-      {dots.map((pos, i) => (
+      {Array.from({ length: 9 }).map((_, i) => (
         <div
           key={i}
-          className={`absolute w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-zinc-900 ${pos}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            background: pips.includes(i) ? 'var(--color-navy)' : 'transparent',
+          }}
         />
       ))}
     </div>
@@ -35,12 +46,21 @@ function Die({ value, rolling }: { value: number; rolling: boolean }) {
 }
 
 export default function DiceRoll({ dice, rolling }: DiceRollProps) {
-  if (!dice) return null
-
   return (
-    <div className="flex gap-3 items-center justify-center">
-      <Die value={dice[0]} rolling={rolling} />
-      <Die value={dice[1]} rolling={rolling} />
+    <div className="flex flex-col items-center gap-2">
+      <div className="flex gap-2.5">
+        <Die value={dice?.[0] ?? 1} rolling={rolling} />
+        <Die value={dice?.[1] ?? 1} rolling={rolling} />
+      </div>
+      <div
+        className="text-base min-h-[1.5em]"
+        style={{
+          fontFamily: 'var(--font-mono), monospace',
+          color: 'var(--color-gold-l)',
+        }}
+      >
+        {dice ? `סה"כ: ${dice[0] + dice[1]}` : '—'}
+      </div>
     </div>
   )
 }

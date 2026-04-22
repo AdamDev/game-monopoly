@@ -2,23 +2,22 @@
 
 import type { GamePlayer, PlayerColor } from '@/types/game'
 
-// Classic Monopoly tokens — one per player color
-const TOKENS: Record<PlayerColor, { icon: string; label: string }> = {
-  red: { icon: '🎩', label: 'מגבעת' },
-  blue: { icon: '🚗', label: 'מכונית' },
-  green: { icon: '🐕', label: 'כלב' },
-  yellow: { icon: '👢', label: 'מגף' },
-  purple: { icon: '🚢', label: 'אונייה' },
-  orange: { icon: '🪡', label: 'אצבעון' },
+const TOKEN_BY_COLOR: Record<PlayerColor, string> = {
+  red: '🎩',
+  blue: '🚗',
+  green: '🐕',
+  yellow: '👢',
+  purple: '🚢',
+  orange: '🪡',
 }
 
-const PLAYER_RING: Record<string, string> = {
-  red: 'ring-red-500',
-  blue: 'ring-blue-500',
-  green: 'ring-green-500',
-  yellow: 'ring-yellow-400',
-  purple: 'ring-purple-500',
-  orange: 'ring-orange-500',
+const PLAYER_HEX: Record<string, string> = {
+  red: '#cc2936',
+  blue: '#1d6bbf',
+  green: '#2e8b57',
+  yellow: '#c9a84c',
+  purple: '#9b59b6',
+  orange: '#e67e22',
 }
 
 interface PlayerTokenProps {
@@ -31,14 +30,12 @@ interface PlayerTokenProps {
 }
 
 export default function PlayerToken({ player, isCurrentTurn, isMe, x, y, stackIndex }: PlayerTokenProps) {
-  const token = TOKENS[player.color] || TOKENS.red
-  const ring = PLAYER_RING[player.color] || 'ring-zinc-400'
+  const token = TOKEN_BY_COLOR[player.color] || '🎩'
+  const colorHex = PLAYER_HEX[player.color] || '#888'
 
-  // Stagger tokens sharing a cell (offset in a small circle)
-  const angle = (stackIndex * 60) * (Math.PI / 180)
-  const radius = stackIndex === 0 ? 0 : 1.6
-  const dx = Math.cos(angle) * radius
-  const dy = Math.sin(angle) * radius
+  // Stagger tokens in a 3-column micro-grid (matches design)
+  const dx = (stackIndex % 3 - 1) * 1.4
+  const dy = (Math.floor(stackIndex / 3)) * 1.4
 
   return (
     <div
@@ -52,44 +49,30 @@ export default function PlayerToken({ player, isCurrentTurn, isMe, x, y, stackIn
       }}
     >
       <div
-        className={`
-          relative flex items-center justify-center
-          w-8 h-8 sm:w-9 sm:h-9 rounded-full
-          bg-gradient-to-br from-zinc-200 via-zinc-400 to-zinc-600
-          ring-2 ${ring} ring-offset-1 ring-offset-[var(--color-board-felt)]
-          shadow-[0_3px_6px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.7)]
-          ${isCurrentTurn ? 'animate-bounce-soft scale-110' : ''}
-          ${player.isBankrupt ? 'opacity-30 grayscale' : ''}
-        `}
-        title={`${player.name} — ${token.label}${isMe ? ' (אני)' : ''}`}
+        className={`relative flex items-center justify-center rounded-full ${isCurrentTurn ? 'animate-bounce-soft' : ''} ${player.isBankrupt ? 'opacity-30 grayscale' : ''}`}
+        style={{
+          width: '22px',
+          height: '22px',
+          background: colorHex,
+          border: '2px solid #fff',
+          boxShadow: isCurrentTurn
+            ? `0 0 0 2px ${colorHex}66, 0 2px 8px rgba(0,0,0,0.5)`
+            : '0 2px 8px rgba(0,0,0,0.5)',
+          overflow: 'hidden',
+        }}
+        title={`${player.name}${isMe ? ' (אני)' : ''}`}
       >
         {player.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={player.avatarUrl}
             alt={player.name}
-            className="w-full h-full object-cover rounded-full"
+            className="absolute inset-0 w-full h-full object-cover rounded-full"
           />
         ) : (
-          <span
-            className="text-lg sm:text-xl leading-none select-none"
-            style={{
-              filter: 'grayscale(0.6) contrast(1.1) drop-shadow(0 1px 1px rgba(0,0,0,0.4))',
-            }}
-          >
-            {token.icon}
-          </span>
+          <span className="text-[0.7rem] leading-none select-none">{token}</span>
         )}
       </div>
-
-      {isCurrentTurn && (
-        <>
-          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,1)] animate-pulse" />
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
-            {player.name}
-          </div>
-        </>
-      )}
     </div>
   )
 }

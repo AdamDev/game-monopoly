@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb'
 import { Game } from '@/models/Game'
 import { BUYABLE_POSITIONS } from '@/lib/board-data'
 import { PLAYER_COLORS } from '@/types/game'
+import { getAvatarForName } from '@/lib/avatars'
 import crypto from 'crypto'
 
 function generateCode(): string {
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
         playerId,
         name: playerName,
         color: PLAYER_COLORS[0],
+        avatarUrl: getAvatarForName(playerName),
         position: 0,
         money: 1500,
         isInJail: false,

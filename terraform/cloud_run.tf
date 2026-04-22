@@ -21,7 +21,7 @@ resource "google_cloud_run_v2_service" "monopoly_app" {
 
     containers {
       # Updated by deploy.sh after each build
-      image = "docker.io/adamva/monopoly@sha256:160225af661aed685b2b0e2e7e81b90fe3c4696f45ec6eab3d4514fd76b61fbb"
+      image = "docker.io/adamva/monopoly@sha256:ed1e3f85f010527e1dad5caf7da8872d477ef94f13896daf8859c4e76ee9cbe0"
 
       ports {
         container_port = 3000

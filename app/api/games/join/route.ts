@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { connectToDatabase } from '@/lib/mongodb'
 import { Game } from '@/models/Game'
 import { PLAYER_COLORS } from '@/types/game'
+import { getAvatarForName } from '@/lib/avatars'
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
       playerId,
       name: playerName,
       color,
+      avatarUrl: getAvatarForName(playerName),
       position: 0,
       money: 1500,
       isInJail: false,

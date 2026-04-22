@@ -1,28 +1,41 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, useSyncExternalStore, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { getPlayerId, getPlayerName, setPlayerName } from '@/lib/player'
+import { getPlayerId, getPlayerName, setPlayerName, subscribePlayerName } from '@/lib/player'
 import NamePrompt from '@/components/NamePrompt'
+
+function Frame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative flex flex-1 items-center justify-center px-4">
+      <div className="bg-grid-overlay" />
+      <div className="relative z-10">{children}</div>
+    </div>
+  )
+}
 
 export default function JoinByLink({ params }: { params: Promise<{ code: string }> }) {
   const { code } = use(params)
   const router = useRouter()
-  const [needsName, setNeedsName] = useState(false)
+  const savedName = useSyncExternalStore(
+    subscribePlayerName,
+    () => getPlayerName(),
+    () => null
+  )
+  const loaded = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
   const [error, setError] = useState('')
   const [joining, setJoining] = useState(false)
 
   useEffect(() => {
-    const name = getPlayerName()
-    if (name) {
-      joinGame(name)
-    } else {
-      setNeedsName(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    getPlayerId()
   }, [])
 
   const joinGame = async (name: string) => {
+    setPlayerName(name)
     setJoining(true)
     setError('')
     try {
@@ -47,38 +60,56 @@ export default function JoinByLink({ params }: { params: Promise<{ code: string 
     }
   }
 
-  const handleNameSubmit = (name: string) => {
-    setPlayerName(name)
-    setNeedsName(false)
-    joinGame(name)
-  }
-
-  if (needsName) {
+  if (joining) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <NamePrompt
-          onSubmit={handleNameSubmit}
-          title="הצטרפות למשחק"
-          subtitle={`הזינו את שמכם כדי להצטרף למשחק ${code.toUpperCase()}`}
-        />
-      </div>
+      <Frame>
+        <div className="gold-panel px-10 py-8 text-center">
+          <p style={{ color: 'var(--color-gold-l)' }} className="font-semibold tracking-wider">
+            מצטרף למשחק...
+          </p>
+        </div>
+      </Frame>
     )
   }
 
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      {joining && <p className="text-zinc-400">מצטרף למשחק...</p>}
-      {error && (
-        <div className="text-center">
-          <p className="text-red-400 mb-4">{error}</p>
+  if (error) {
+    return (
+      <Frame>
+        <div className="gold-panel px-10 py-8 text-center max-w-sm">
+          <p className="text-red-300 mb-5">{error}</p>
           <button
             onClick={() => router.push('/')}
-            className="rounded-xl bg-mono-card border border-mono-border px-6 py-3 text-white hover:bg-mono-card-hover"
+            className="btn-skew px-7 py-3 font-bold tracking-wider transition-transform hover:-translate-y-0.5"
+            style={{
+              background: 'linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-l) 55%, var(--color-gold) 100%)',
+              color: 'var(--color-navy)',
+              boxShadow: '0 4px 24px rgba(201,168,76,0.35)',
+            }}
           >
             חזרה לדף הבית
           </button>
         </div>
-      )}
-    </div>
+      </Frame>
+    )
+  }
+
+  if (!loaded) {
+    return (
+      <Frame>
+        <p style={{ color: 'var(--color-muted)' }}>טוען...</p>
+      </Frame>
+    )
+  }
+
+  return (
+    <Frame>
+      <NamePrompt
+        onSubmit={joinGame}
+        defaultValue={savedName || ''}
+        title="הצטרפות למשחק"
+        subtitle={`הזינו את שמכם כדי להצטרף למשחק ${code.toUpperCase()}`}
+        submitLabel="הצטרף"
+      />
+    </Frame>
   )
 }
