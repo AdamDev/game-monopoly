@@ -441,8 +441,53 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         </button>
       </div>
 
+      {/* Mobile players strip (hidden on desktop — desktop shows the full panel) */}
+      <div className="lg:hidden flex gap-2 px-3 pt-3 overflow-x-auto">
+        {game.players.map((p, i) => {
+          const colorHex = PLAYER_COLOR_HEX[p.color] || '#888'
+          const isTurn = i === game.currentPlayerIndex
+          return (
+            <div
+              key={p.playerId}
+              className="flex items-center gap-2 px-2 py-1.5 flex-shrink-0"
+              style={{
+                background: isTurn ? 'rgba(201,168,76,0.1)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${isTurn ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                borderRadius: '4px',
+              }}
+            >
+              <div
+                className="w-6 h-6 rounded-full flex items-center justify-center text-[0.7rem] relative overflow-hidden flex-shrink-0"
+                style={{
+                  background: colorHex + '33',
+                  border: '2px solid ' + (isTurn ? 'var(--color-gold)' : colorHex),
+                }}
+              >
+                {p.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.avatarUrl} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
+                ) : (
+                  <span>{TOKEN_BY_COLOR[p.color] || '🎩'}</span>
+                )}
+              </div>
+              <div className="flex flex-col leading-tight">
+                <div className="text-[0.7rem] font-bold truncate max-w-[72px]" style={{ color: 'var(--color-cream)' }}>
+                  {p.name}{p.playerId === playerId && ' (אני)'}
+                </div>
+                <div className="text-[0.65rem]" style={{ color: 'var(--color-gold-l)', fontFamily: 'var(--font-mono), monospace' }} dir="ltr">
+                  ₪{p.money.toLocaleString()}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
       {/* Layout */}
-      <div className="relative z-10 flex-1 flex flex-col lg:flex-row items-stretch lg:items-center justify-center gap-3 p-3 overflow-hidden">
+      <div
+        className="relative z-10 flex-1 flex flex-col lg:flex-row items-stretch lg:items-center justify-center gap-3 p-3 overflow-hidden"
+        style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+      >
 
         {/* LEFT PANEL — players + my props (desktop) */}
         <div className="hidden lg:flex flex-col gap-2.5 w-[210px] flex-shrink-0 max-h-[680px]">
@@ -591,7 +636,44 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
             </div>
           </div>
 
-          {/* Mobile log (collapsible) */}
+          {/* Mobile collapsibles */}
+          <details className="lg:hidden gold-panel p-3.5">
+            <summary className="cursor-pointer text-[0.7rem] font-bold tracking-wider uppercase" style={{ color: 'var(--color-gold)' }}>
+              הנכסים שלי ({myProps.length})
+            </summary>
+            <div className="mt-2 flex flex-col gap-1">
+              {myProps.length === 0 && (
+                <div className="text-[0.7rem] py-1" style={{ color: 'var(--color-muted)' }}>
+                  עדיין אין לך נכסים
+                </div>
+              )}
+              {myProps.map(prop => {
+                const sq = BOARD[prop.boardPosition]
+                if (!sq) return null
+                const colorClass = sq.color
+                  ? `bg-prop-${sq.color}`
+                  : sq.type === 'railroad'
+                    ? 'bg-zinc-700'
+                    : 'bg-blue-400'
+                return (
+                  <div
+                    key={prop.boardPosition}
+                    className="flex items-center gap-1.5 px-2 py-1 text-[0.7rem]"
+                    style={{
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.07)',
+                      color: 'var(--color-cream)',
+                    }}
+                  >
+                    <div className={`w-2.5 h-2.5 rounded-full ${colorClass} flex-shrink-0`} />
+                    <div className="flex-1 truncate">{sq.name}</div>
+                    {prop.houses > 0 && prop.houses < 5 && <span>🏠×{prop.houses}</span>}
+                    {prop.houses === 5 && <span>🏨</span>}
+                  </div>
+                )
+              })}
+            </div>
+          </details>
           <details className="lg:hidden gold-panel p-3.5">
             <summary className="cursor-pointer text-[0.7rem] font-bold tracking-wider uppercase" style={{ color: 'var(--color-gold)' }}>
               יומן המשחק
